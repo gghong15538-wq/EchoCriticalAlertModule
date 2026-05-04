@@ -2,10 +2,8 @@ name: EchoCriticalAlertModule
 options:
   bundleIdPrefix: com.echo
   deploymentTarget:
-    iOS: "12.0"
+    iOS: "11.0"
   createIntermediateGroups: true
-  xcodeVersion: "15.0"
-  objectVersion: 56
 
 targets:
   EchoCriticalAlertModule:
@@ -26,8 +24,10 @@ targets:
         DEAD_CODE_STRIPPING: NO
         SKIP_INSTALL: NO
         CLANG_ENABLE_MODULES: YES
-        HEADER_SEARCH_PATHS:
-          - $(SRCROOT)/EchoCriticalAlertModule/SDK/inc/**
+        FRAMEWORK_SEARCH_PATHS:
+          - $(SRCROOT)/EchoCriticalAlertModule/SDK/libs
         PRODUCT_BUNDLE_IDENTIFIER: com.echo.EchoCriticalAlertModule
     dependencies:
       - sdk: UserNotifications.framework
+      - framework: EchoCriticalAlertModule/SDK/libs/DCUniBase.framework
+        embed: false

@@ -4,6 +4,8 @@ options:
   deploymentTarget:
     iOS: "11.0"
   createIntermediateGroups: true
+  xcodeVersion: "15.0"
+  objectVersion: 56
 
 targets:
   EchoCriticalAlertModule:

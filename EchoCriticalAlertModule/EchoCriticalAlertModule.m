@@ -1,33 +1,8 @@
 #import "EchoCriticalAlertModule.h"
 #import <UserNotifications/UserNotifications.h>
 
-// 单例 delegate 持有者
-@interface EchoAlertDelegate : NSObject <UNUserNotificationCenterDelegate>
-+ (instancetype)shared;
+@interface EchoCriticalAlertModule () <UNUserNotificationCenterDelegate>
 @end
-
-@implementation EchoAlertDelegate
-+ (instancetype)shared {
-    static EchoAlertDelegate *instance = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        instance = [[EchoAlertDelegate alloc] init];
-    });
-    return instance;
-}
-
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center 
-       willPresentNotification:(UNNotification *)notification 
-         withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
-    NSLog(@"[Echo-CriticalAlert] 前台收到通知，准备显示");
-    if (@available(iOS 14.0, *)) {
-        completionHandler(UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionList);
-    } else {
-        completionHandler(UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound);
-    }
-}
-@end
-
 
 @implementation EchoCriticalAlertModule
 
@@ -57,8 +32,7 @@ WX_EXPORT_METHOD(@selector(fireAlert))
     NSLog(@"[Echo-CriticalAlert] 收到前端指令，准备发射本地关键警告！");
     
     if (@available(iOS 12.0, *)) {
-        // 用单例做 delegate，防止被释放
-        [UNUserNotificationCenter currentNotificationCenter].delegate = [EchoAlertDelegate shared];
+        [UNUserNotificationCenter currentNotificationCenter].delegate = self;
         
         UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
         content.title = @"紧急求助信号";
@@ -75,6 +49,18 @@ WX_EXPORT_METHOD(@selector(fireAlert))
                 NSLog(@"[Echo-CriticalAlert] 警报发射成功！");
             }
         }];
+    }
+}
+
+#pragma mark - UNUserNotificationCenterDelegate
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center 
+       willPresentNotification:(UNNotification *)notification 
+         withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
+    if (@available(iOS 14.0, *)) {
+        completionHandler(UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionList);
+    } else {
+        completionHandler(UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound);
     }
 }
 

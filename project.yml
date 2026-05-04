@@ -1,0 +1,31 @@
+name: EchoCriticalAlertModule
+options:
+  bundleIdPrefix: com.echo
+  deploymentTarget:
+    iOS: "11.0"
+  createIntermediateGroups: true
+
+targets:
+  EchoCriticalAlertModule:
+    type: framework
+    platform: iOS
+    sources:
+      - path: EchoCriticalAlertModule
+        excludes:
+          - "SDK/**"
+      - path: EchoCriticalAlertModule/SDK
+        buildPhase: none
+    settings:
+      base:
+        MACH_O_TYPE: staticlib
+        BUILD_LIBRARY_FOR_DISTRIBUTION: YES
+        DEFINES_MODULE: YES
+        ENABLE_BITCODE: NO
+        DEAD_CODE_STRIPPING: NO
+        SKIP_INSTALL: NO
+        CLANG_ENABLE_MODULES: YES
+        HEADER_SEARCH_PATHS:
+          - $(SRCROOT)/EchoCriticalAlertModule/SDK/inc/**
+        PRODUCT_BUNDLE_IDENTIFIER: com.echo.EchoCriticalAlertModule
+    dependencies:
+      - sdk: UserNotifications.framework

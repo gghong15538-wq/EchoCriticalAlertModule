@@ -3,10 +3,12 @@
 
 @implementation EchoCriticalAlertModule
 
-UNI_EXPORT_METHOD(@selector(getCriticalAlertStatus:))
-UNI_EXPORT_METHOD(@selector(fireAlert))
+@synthesize weexInstance;
 
-- (void)getCriticalAlertStatus:(UniModuleKeepAliveCallback)callback {
+WX_EXPORT_METHOD(@selector(getCriticalAlertStatus:))
+WX_EXPORT_METHOD(@selector(fireAlert))
+
+- (void)getCriticalAlertStatus:(WXModuleKeepAliveCallback)callback {
     if (@available(iOS 12.0, *)) {
         [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
             

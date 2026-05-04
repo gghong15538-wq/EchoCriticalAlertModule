@@ -1,0 +1,61 @@
+name: Build iOS Framework
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: List files (debug)
+        run: |
+          echo "=== Project structure ==="
+          ls -la
+          echo "=== Source files ==="
+          ls -la EchoCriticalAlertModule/
+          echo "=== SDK headers ==="
+          ls -la EchoCriticalAlertModule/SDK/inc/ | head -20
+
+      - name: Build framework (Device arm64)
+        run: |
+          xcodebuild \
+            -project EchoCriticalAlertModule.xcodeproj \
+            -scheme EchoCriticalAlertModule \
+            -configuration Release \
+            -sdk iphoneos \
+            -arch arm64 \
+            ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            CONFIGURATION_BUILD_DIR=${{ github.workspace }}/output \
+            clean build
+
+      - name: Verify framework
+        run: |
+          echo "=== Framework contents ==="
+          ls -la output/EchoCriticalAlertModule.framework/
+          echo "=== Architectures ==="
+          lipo -info output/EchoCriticalAlertModule.framework/EchoCriticalAlertModule
+
+      - name: Upload Framework Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: EchoCriticalAlertModule-Framework
+          path: output/EchoCriticalAlertModule.framework
+          retention-days: 30

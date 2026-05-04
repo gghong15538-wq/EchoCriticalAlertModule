@@ -2,7 +2,7 @@ name: EchoCriticalAlertModule
 options:
   bundleIdPrefix: com.echo
   deploymentTarget:
-    iOS: "11.0"
+    iOS: "12.0"
   createIntermediateGroups: true
   xcodeVersion: "15.0"
   objectVersion: 56
